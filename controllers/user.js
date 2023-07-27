@@ -1,11 +1,9 @@
 const User = require("../models/users")
 const asyncHandler = require("express-async-handler")
 const bcrypt = require("bcrypt")
-const { generateToken } = require("../utilities/jwt.js")
 const jwt = require("jsonwebtoken")
 const nodemailer = require("nodemailer")
 const randomstring = require("randomstring")
-const { randomBytes } = require("crypto")
 
 const register = asyncHandler(async (req, res) => {
     const { username, email, password } = req.body
@@ -55,16 +53,16 @@ const login = asyncHandler(async (req, res) => {
 
     if (user) {
         const flag = await bcrypt.compare(password, user.password)
-
+        const id = user._id
         if (flag) {
             res.json({
                 id: user.id,
                 username: user.username,
                 email: user.email,
                 // Generate the JWT access token with a 60-minute expiration
-                accessToken: jwt.sign({ userId: user.id }, process.env.SECRETKEY, { expiresIn: '1h' }),
+                accessToken: jwt.sign({ id }, process.env.SECRETKEY, { expiresIn: '1h' }),
                 // Generate the refresh token with a 24-hour expiration
-                refreshToken: jwt.sign({ userId: user.id }, process.env.SECRETKEY, { expiresIn: '24h' })
+                refreshToken: jwt.sign({ id }, process.env.SECRETKEY, { expiresIn: '24h' })
             })
         } else {
             res.status(400).json({
@@ -118,7 +116,8 @@ const forgotPassword = asyncHandler(async (req, res) => {
         const email = req.body.email
         const user = await User.findOne({email: email})
         if(user){
-            const token = generateToken(user._id)
+            const token =  jwt.sign({ id }, process.env.SECRETKEY, { expiresIn: '1h' })
+
             sendResetEmail(user.username, user.email, token)
             res.status(200).json({
                 msg: "Check your email for password reset link "

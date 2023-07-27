@@ -26,3 +26,4 @@ mongoose
 
 
 app.use("/api/auth", require("./routes/user"))
+app.use("/api/restaurants", require("./routes/restaurants"))
