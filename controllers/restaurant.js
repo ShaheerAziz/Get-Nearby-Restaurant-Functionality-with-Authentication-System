@@ -41,7 +41,7 @@ const getNearbyRestuarants = asyncHandler(async (req, res) => {
 
 const getAllRestuarants = asyncHandler(async (req, res) => {
     try {
-        const restaurants = await Restaurant.find();
+        const restaurants = await Restaurant.find({});
         res.status(200).json({ restaurants });
     } catch (err) {
         res.status(400).json({

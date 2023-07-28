@@ -14,6 +14,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 const dbURL = process.env.DBCONNECTION
 mongoose.set("strictQuery", false)
+const db = "UserAuthRestaurants"
 
 mongoose
     .connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true })
